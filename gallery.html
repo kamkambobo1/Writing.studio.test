@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gallery | Ibeakuzie Kamsiriochukwu</title>
+    <style>
+        :root {--midnight: #0F172A; --deep-blue: #1E293B; --gold: #F59E0B; --gold-light: #FBBF24; --cream: #FFFBEB; --text: #E2E8F0;}
+        * {margin:0; padding:0; box-sizing:border-box; font-family:Georgia, serif;}
+        body {background:linear-gradient(135deg, var(--midnight), var(--deep-blue)); color:var(--text); min-height:100vh; padding-top:80px;}
+        nav {position:fixed; top:0; left:0; right:0; background:rgba(15,23,42,0.95); backdrop-filter:blur(10px); z-index:100; padding:1rem 5%; border-bottom:1px solid rgba(245,158,11,0.2);}
+        nav ul {list-style:none; display:flex; gap:1.5rem; flex-wrap:wrap; justify-content:center;}
+        nav a {color:var(--cream); text-decoration:none; font-size:1rem; transition:all 0.3s;}
+        nav a:hover, nav a.active {color:var(--gold); text-shadow:0 0 10px rgba(245,158,11,0.5);}
+        section {padding:3rem 5%; max-width:1200px; margin:0 auto;}
+        .section-title {font-size:2rem; color:var(--gold); margin-bottom:2rem; text-align:center; position:relative;}
+        .section-title::after {content:''; width:80px; height:3px; background:var(--gold); position:absolute; bottom:-8px; left:50%; transform:translateX(-50%); border-radius:2px;}
+        .gallery {display:grid; grid-template-columns:repeat(auto-fill, minmax(250px, 1fr)); gap:1rem;}
+        .gallery-img {width:100%; aspect-ratio:4/5; object-fit:cover; border-radius:8px; transition:transform 0.3s;}
+        .gallery-img:hover {transform:scale(1.05);}
+        footer {text-align:center; padding:2rem; color:var(--cream); opacity:0.6; font-size:0.9rem; border-top:1px solid rgba(245,158,11,0.1); margin-top:2rem;}
+    </style>
+    <link rel="stylesheet" href="site.css">
+</head>
+<body>
+<nav>
+    <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="collections.html">Collections</a></li>
+        <li><a href="poems.html">All Poems</a></li>
+        <li><a href="quotes.html">Quotes</a></li>
+        <li><a href="gallery.html" class="active">Gallery</a></li>
+        <li><a href="studio.html">Studio</a></li>
+    </ul>
+</nav>
+
+<section>
+    <h2 class="section-title">Gallery</h2>
+    <div class="gallery">
+        <img class="gallery-img" src="storm-in-disguise.jpg" alt="Storm in Disguise">
+        <img class="gallery-img" src="another-world.jpg" alt="Another World">
+        <img class="gallery-img" src="thorns-path.jpg" alt="Beyond the Thorns">
+        <img class="gallery-img" src="beyond-blank-page.jpg" alt="Beyond the Blank Page">
+        <img class="gallery-img" src="broken-promises.jpg" alt="Echoes of Neglect">
+        <img class="gallery-img" src="only-i-understand.jpg" alt="Only I Understand">
+        <img class="gallery-img" src="labyrinth-you.jpg" alt="The Labyrinth of You">
+        <img class="gallery-img" src="strength-manifest.jpg" alt="Strength">
+        <img class="gallery-img" src="her-pull.jpg" alt="Her Pull">
+        <img class="gallery-img" src="echoes-regret.jpg" alt="Echoes of Regret">
+        <img class="gallery-img" src="nature-course.jpg" alt="Nature Took Its Course">
+        <img class="gallery-img" src="wisdom-light.jpg" alt="Wisdom's Light">
+        <img class="gallery-img" src="author-portrait.jpg" alt="Author Portrait">
+    </div>
+</section>
+
+<footer>
+    <p>© 2026 Ibeakuzie Kamsiriochukwu · Midnight & Gold ✨</p>
+</footer>
+    <script src="site.js"></script>
+</body>
+</html>

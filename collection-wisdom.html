@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wisdom &amp; Grace | Ibeakuzie Kamsiriochukwu</title>
+    <style>
+        :root {--midnight: #0F172A; --deep-blue: #1E293B; --gold: #F59E0B; --gold-light: #FBBF24; --cream: #FFFBEB; --text: #E2E8F0;}
+        * {margin:0; padding:0; box-sizing:border-box; font-family:Georgia, serif;}
+        body {background:linear-gradient(135deg, var(--midnight), var(--deep-blue)); color:var(--text); min-height:100vh; padding-top:80px;}
+        nav {position:fixed; top:0; left:0; right:0; background:rgba(15,23,42,0.95); backdrop-filter:blur(10px); z-index:100; padding:1rem 5%; border-bottom:1px solid rgba(245,158,11,0.2);}
+        nav ul {list-style:none; display:flex; gap:1.5rem; flex-wrap:wrap; justify-content:center;}
+        nav a {color:var(--cream); text-decoration:none; font-size:1rem; transition:all 0.3s;}
+        nav a:hover, nav a.active {color:var(--gold); text-shadow:0 0 10px rgba(245,158,11,0.5);}
+        section {padding:3rem 5%; max-width:900px; margin:0 auto;}
+        .back-link {display:inline-block; color:var(--gold); text-decoration:none; margin-bottom:2rem;}
+        .banner {height:200px; border-radius:16px; background:#1E293B center/cover no-repeat; border:1px solid rgba(245,158,11,0.25); margin-bottom:1.5rem;}
+        .section-title {font-size:2rem; color:var(--gold); margin-bottom:0.5rem;}
+        .section-intro {color:var(--cream); opacity:0.75; font-style:italic; margin-bottom:2rem; line-height:1.7;}
+        .poems-grid {display:grid; gap:1rem;}
+        .poem-card {background:rgba(30,41,59,0.5); border-radius:12px; padding:1.2rem; border-left:4px solid var(--gold); transition:all 0.3s; text-decoration:none; display:block;}
+        .poem-card:hover {background:rgba(30,41,59,0.8); transform:translateX(5px);}
+        .poem-card h4 {color:var(--gold-light); font-size:1.1rem; margin-bottom:0.3rem;}
+        .poem-card p {color:var(--text); opacity:0.7; font-size:0.9rem;}
+        footer {text-align:center; padding:2rem; color:var(--cream); opacity:0.6; font-size:0.9rem; border-top:1px solid rgba(245,158,11,0.1); margin-top:2rem;}
+    </style>
+    <link rel="stylesheet" href="site.css">
+</head>
+<body>
+<nav>
+    <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="collections.html" class="active">Collections</a></li>
+        <li><a href="poems.html">All Poems</a></li>
+        <li><a href="quotes.html">Quotes</a></li>
+        <li><a href="gallery.html">Gallery</a></li>
+        <li><a href="studio.html">Studio</a></li>
+    </ul>
+</nav>
+<section>
+    <a href="collections.html" class="back-link">← Back to Collections</a>
+    <div class="banner" style="background-image:url('images/wisdom-light.jpg')"></div>
+    <h1 class="section-title">🔆 Wisdom &amp; Grace</h1>
+    <p class="section-intro">Light, guidance, and the quiet lessons learned.</p>
+    <div class="poems-grid">
+        <a href="poem-wisdom-light.html" class="poem-card"><h4>🔆 Wisdom's Light</h4><p>Wisdom — the key to unlocking potential.</p></a>
+    </div>
+</section>
+<footer>
+    <p>© 2026 Ibeakuzie Kamsiriochukwu · Midnight &amp; Gold ✨</p>
+</footer>
+    <script src="site.js"></script>
+</body>
+</html>

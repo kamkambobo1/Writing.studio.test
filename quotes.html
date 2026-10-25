@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0F172A">
+    <title>Quotes | Ibeakuzie Kamsiriochukwu</title>
+    <style>
+        :root {
+            --midnight: #0F172A;
+            --deep-blue: #1E293B;
+            --gold: #F59E0B;
+            --gold-light: #FBBF24;
+            --cream: #FFFBEB;
+            --text: #E2E8F0;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Georgia, serif;
+        }
+        body {
+            background: linear-gradient(135deg, var(--midnight), var(--deep-blue));
+            color: var(--text);
+            min-height: 100vh;
+            padding-top: 80px;
+        }
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 100;
+            padding: 1rem 5%;
+            border-bottom: 1px solid rgba(245, 158, 11, 0.2);
+        }
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        nav a {
+            color: var(--cream);
+            text-decoration: none;
+            font-size: 1rem;
+            transition: color 0.3s;
+        }
+        nav a:hover,
+        nav a.active {
+            color: var(--gold);
+        }
+        section {
+            padding: 3rem 5%;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .section-title {
+            font-size: 2rem;
+            color: var(--gold);
+            margin-bottom: 2rem;
+            text-align: center;
+            position: relative;
+        }
+        .section-title::after {
+            content: '';
+            width: 80px;
+            height: 3px;
+            background: var(--gold);
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 2px;
+        }
+        .quote-card {
+            background: rgba(30, 41, 59, 0.65);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(245, 158, 11, 0.15);
+            border-left: 4px solid var(--gold);
+            transition: background 0.3s, border-color 0.3s;
+            scroll-margin-top: 100px;
+            cursor: pointer;
+        }
+        .quote-card:hover {
+            background: rgba(30, 41, 59, 0.9);
+            border-color: rgba(245, 158, 11, 0.45);
+        }
+        .quote-card:focus-visible {
+            outline: 2px solid var(--gold);
+            outline-offset: 4px;
+        }
+        .quote-card:target {
+            border-color: var(--gold);
+            box-shadow: 0 0 20px rgba(245, 158, 11, 0.12);
+        }
+        .quote-text {
+            font-size: 1.2rem;
+            font-style: italic;
+            color: var(--cream);
+            line-height: 1.9;
+            position: relative;
+            padding-left: 1rem;
+        }
+        .quote-text::before {
+            content: '"';
+            font-size: 2.5rem;
+            color: var(--gold);
+            opacity: 0.35;
+            position: absolute;
+            top: -10px;
+            left: -10px;
+        }
+        .quote-source {
+            color: var(--gold-light);
+            margin-top: 1rem;
+            text-align: right;
+            font-size: 0.95rem;
+        }
+        /* Sharing controls live in the popup, not on the quote cards. */
+        .quote-actions {
+            display: none;
+        }
+        #share-status {
+            min-height: 1.5rem;
+            text-align: center;
+            color: var(--gold-light);
+            font-size: 0.9rem;
+            margin-top: 1rem;
+        }
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--cream);
+            opacity: 0.6;
+            font-size: 0.9rem;
+            border-top: 1px solid rgba(245, 158, 11, 0.1);
+            margin-top: 3rem;
+        }
+        /* Quote options popup */
+        .quote-menu-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+            background: rgba(2, 6, 23, 0.78);
+            backdrop-filter: blur(6px);
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+        .quote-menu-overlay.open {
+            display: flex;
+        }
+        .quote-menu {
+            width: 100%;
+            max-width: 410px;
+            max-height: 85vh;
+            overflow-y: auto;
+            background: var(--midnight);
+            border: 1px solid rgba(245, 158, 11, 0.45);
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+        }
+        .quote-menu h3 {
+            color: var(--gold);
+            font-size: 1.35rem;
+            margin-bottom: 0.6rem;
+        }
+        .quote-menu-preview {
+            color: var(--cream);
+            font-style: italic;
+            line-height: 1.7;
+            margin-bottom: 1.2rem;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+        .quote-menu-options {
+            display: grid;
+            gap: 0.65rem;
+        }
+        .quote-btn {
+            width: 100%;
+            border: 1px solid rgba(245, 158, 11, 0.4);
+            border-radius: 9px;
+            padding: 0.85rem 1rem;
+            background: rgba(30, 41, 59, 0.85);
+            color: var(--cream);
+            font-size: 0.95rem;
+            text-align: left;
+            cursor: pointer;
+            transition: background 0.2s, border-color 0.2s;
+        }
+        .quote-btn:hover {
+            background: rgba(245, 158, 11, 0.15);
+            border-color: var(--gold);
+        }
+        .quote-btn.primary {
+            background: var(--gold);
+            color: var(--midnight);
+            border-color: var(--gold);
+            font-weight: bold;
+        }
+        .quote-btn:disabled {
+            opacity: 0.6;
+            cursor: wait;
+        }
+        .quote-close {
+            margin-top: 1rem;
+            text-align: center;
+            background: transparent;
+        }
+        body.menu-open {
+            overflow: hidden;
+        }
+        @media (max-width: 600px) {
+            section {
+                padding: 2rem 1rem;
+            }
+            .quote-card {
+                padding: 1.3rem;
+            }
+            .quote-text {
+                font-size: 1.1rem;
+            }
+            .quote-menu {
+                padding: 1.2rem;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="site.css">
+</head>
+<body>
+<nav>
+    <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="collections.html">Collections</a></li>
+        <li><a href="poems.html">All Poems</a></li>
+        <li><a href="quotes.html" class="active">Quotes</a></li>
+        <li><a href="gallery.html">Gallery</a></li>
+        <li><a href="studio.html">Studio</a></li>
+    </ul>
+</nav>
+<section>
+    <h2 class="section-title">💬 Quotes — Lines That Stay</h2>
+    <div class="quote-card" id="quote-nature" data-quote-id="quote-nature">
+        <p class="quote-text">Made the pen my comfort — not just something I held, but something that held me. A quiet listener, an ever-present companion, taking her place in silence, yet never truly replacing her.</p>
+        <p class="quote-source">— Nature Took Its Course</p>
+    </div>
+    <div class="quote-card" id="quote-her-pull" data-quote-id="quote-her-pull">
+        <p class="quote-text">Heartbeat borrowed a map from your smile, ran miles it didn't understand, got lost on purpose — just to keep asking a name in places that only exist in imagination.</p>
+        <p class="quote-source">— Her Pull</p>
+    </div>
+    <div class="quote-card" id="quote-only-i-understand" data-quote-id="quote-only-i-understand">
+        <p class="quote-text">Because even when I say nothing, I am still feeling everything.</p>
+        <p class="quote-source">— Only I Understand</p>
+    </div>
+    <div class="quote-card" id="quote-from-everything" data-quote-id="quote-from-everything">
+        <p class="quote-text">Let the world be a tool — every stone, every shadow, every chance, every mistake, every failed attempt, every successful breakthrough — be turned to your purpose.</p>
+        <p class="quote-source">— From Everything, I Rise</p>
+    </div>
+    <div class="quote-card" id="quote-another-world" data-quote-id="quote-another-world">
+        <p class="quote-text">The smiles you give me take me to another world... Another world.</p>
+        <p class="quote-source">— Another World</p>
+    </div>
+    <div class="quote-card" id="quote-wisdom" data-quote-id="quote-wisdom">
+        <p class="quote-text">Wisdom — the key to unlocking potential and achieving greatness.</p>
+        <p class="quote-source">— Wisdom's Light</p>
+    </div>
+    <div class="quote-card" id="quote-storm" data-quote-id="quote-storm">
+        <p class="quote-text">Open smiles, hidden anger — a raging storm behind a calm appearance.</p>
+        <p class="quote-source">— Storm in Disguise</p>
+    </div>
+    <div class="quote-card" id="quote-blank-page" data-quote-id="quote-blank-page">
+        <p class="quote-text">Refusing to yield, his spirit unbroken — his ultimate stepping stones to triumph.</p>
+        <p class="quote-source">— Beyond the Blank Page</p>
+    </div>
+    <div class="quote-card" id="quote-path" data-quote-id="quote-path">
+        <p class="quote-text">Be Strong, be Optimistic, be Tenacious — never lose yourself.</p>
+        <p class="quote-source">— The Path I Choose</p>
+    </div>
+    <div class="quote-card" id="quote-thorns" data-quote-id="quote-thorns">
+        <p class="quote-text">Why not feel the temporary pain of growth to enjoy the rewards of your hard work?</p>
+        <p class="quote-source">— Beyond the Thorns</p>
+    </div>
+    <div class="quote-card" id="quote-neglect" data-quote-id="quote-neglect">
+        <p class="quote-text">If only we could be sincere, honest and true — make good choices and see them through.</p>
+        <p class="quote-source">— Echoes of Neglect</p>
+    </div>
+    <div class="quote-card" id="quote-regret" data-quote-id="quote-regret">
+        <p class="quote-text">Life is all about mistakes — and through these mistakes we learn and correct ourselves.</p>
+        <p class="quote-source">— Echoes of Regret</p>
+    </div>
+    <div class="quote-card" id="quote-unbound" data-quote-id="quote-unbound">
+        <p class="quote-text">Like a phoenix from the ashes — bright ideas blossomed, illuminating his path to greatness.</p>
+        <p class="quote-source">— Unbound</p>
+    </div>
+    <div class="quote-card" id="quote-labyrinth" data-quote-id="quote-labyrinth">
+        <p class="quote-text">Lost within the depths of your eyes, captivated by your aura — both enchanting and comforting.</p>
+        <p class="quote-source">— The Labyrinth of You</p>
+    </div>
+    <p id="share-status" role="status" aria-live="polite"></p>
+</section>
+<footer>
+    <p>© 2026 Ibeakuzie Kamsiriochukwu · Midnight &amp; Gold ✨</p>
+</footer>
+<script>
+(() => {
+    "use strict";
+    const cards = Array.from(document.querySelectorAll(".quote-card[data-quote-id]"));
+    const status = document.getElementById("share-status");
+    const authorName = "Ibeakuzie Kamsiriochukwu";
+    function announce(message) {
+        status.textContent = message;
+    }
+    function getQuote(card) {
+        return {
+            text: card.querySelector(".quote-text").textContent.trim(),
+            source: card.querySelector(".quote-source").textContent.trim(),
+            id: card.dataset.quoteId
+        };
+    }
+    // These filenames should match the poem HTML files in the website.
+    function getQuoteUrl(id, card) {
+        if (card && card.dataset.poemUrl) return new URL(card.dataset.poemUrl, window.location.href).href;
+        const poemPages = {
+            "quote-nature": "poem-nature-took-its-course.html",
+            "quote-her-pull": "poem-her-pull.html",
+            "quote-only-i-understand": "poem-only-i-understand.html",
+            "quote-from-everything": "poem-from-everything-i-rise.html",
+            "quote-another-world": "poem-another-world.html",
+            "quote-wisdom": "poem-wisdom-light.html",
+            "quote-storm": "poem-storm-in-disguise.html",
+            "quote-blank-page": "poem-beyond-blank-page.html",
+            "quote-path": "poem-path-i-choose.html",
+            "quote-thorns": "poem-beyond-thorns.html",
+            "quote-neglect": "poem-echoes-neglect.html",
+            "quote-regret": "poem-echoes-regret.html",
+            "quote-unbound": "poem-unbound.html",
+            "quote-labyrinth": "poem-labyrinth-you.html"
+        };
+        const page = poemPages[id];
+        if (!page) {
+            throw new Error("Poem page not found for this quote.");
+        }
+        return new URL(page, window.location.href).href;
+    }
+    async function copyText(text) {
+        if (navigator.clipboard && window.isSecureContext) {
+            await navigator.clipboard.writeText(text);
+            return;
+        }
+        const field = document.createElement("textarea");
+        field.value = text;
+        field.style.position = "fixed";
+        field.style.opacity = "0";
+        field.setAttribute("readonly", "");
+        document.body.appendChild(field);
+        field.select();
+        const copied = document.execCommand("copy");
+        field.remove();
+        if (!copied) {
+            throw new Error("Copy unavailable");
+        }
+    }
+    function roundedRect(ctx, x, y, width, height, radius) {
+        if (typeof ctx.roundRect === "function") {
+            ctx.beginPath();
+            ctx.roundRect(x, y, width, height, radius);
+        } else {
+            // Compatibility fallback for older browsers.
+            ctx.beginPath();
+            ctx.moveTo(x + radius, y);
+            ctx.lineTo(x + width - radius, y);
+            ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+            ctx.lineTo(x + width, y + height - radius);
+            ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+            ctx.lineTo(x + radius, y + height);
+            ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+            ctx.lineTo(x, y + radius);
+            ctx.quadraticCurveTo(x, y, x + radius, y);
+            ctx.closePath();
+        }
+    }
+    function wrapText(ctx, text, maxWidth) {
+        const words = text.split(/\s+/);
+        const lines = [];
+        let line = "";
+        for (const word of words) {
+            const candidate = line ? line + " " + word : word;
+            if (ctx.measureText(candidate).width > maxWidth && line) {
+                lines.push(line);
+                line = word;
+            } else {
+                line = candidate;
+            }
+        }
+        if (line) lines.push(line);
+        return lines;
+    }
+    let authorPortraitPromise;
+    function loadAuthorPortrait() {
+        if (!authorPortraitPromise) {
+            authorPortraitPromise = new Promise(resolve => {
+                const portrait = new Image();
+                portrait.onload = () => resolve(portrait);
+                portrait.onerror = () => resolve(null);
+                portrait.src = new URL("author-portrait.jpg", window.location.href).href;
+            });
+        }
+        return authorPortraitPromise;
+    }
+    async function createQuoteImage(quote) {
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+        if (!ctx) {
+            throw new Error("Image creation is not supported.");
+        }
+        const W = 1080;
+        const H = 1350;
+        const pad = 92;
+        const maxWidth = W - pad * 2;
+        canvas.width = W;
+        canvas.height = H;
+        const bg = ctx.createLinearGradient(0, 0, W, H);
+        bg.addColorStop(0, "#0B1120");
+        bg.addColorStop(0.55, "#17243A");
+        bg.addColorStop(1, "#0F172A");
+        ctx.fillStyle = bg;
+        ctx.fillRect(0, 0, W, H);
+        // Load the author portrait from the website's root folder and blend it
+        // softly into the background before drawing the quote text.
+        try {
+            const authorPortrait = await loadAuthorPortrait();
+            if (authorPortrait) {
+                const imageRatio = authorPortrait.width / authorPortrait.height;
+                const canvasRatio = W / H;
+                let drawWidth = W;
+                let drawHeight = H;
+                if (imageRatio > canvasRatio) {
+                    drawWidth = H * imageRatio;
+                } else {
+                    drawHeight = W / imageRatio;
+                }
+                ctx.save();
+                ctx.globalAlpha = 0.20;
+                ctx.filter = "grayscale(25%)";
+                ctx.drawImage(authorPortrait, (W - drawWidth) / 2, (H - drawHeight) / 2, drawWidth, drawHeight);
+                ctx.restore();
+                // A dark wash preserves contrast and keeps the author photo subtle.
+                const wash = ctx.createLinearGradient(0, 0, 0, H);
+                wash.addColorStop(0, "rgba(11,17,32,0.60)");
+                wash.addColorStop(0.48, "rgba(15,23,42,0.70)");
+                wash.addColorStop(1, "rgba(11,17,32,0.76)");
+                ctx.fillStyle = wash;
+                ctx.fillRect(0, 0, W, H);
+            }
+        } catch (error) {
+            // If the photo is missing or fails to load, use the normal gradient.
+            console.warn("Author portrait could not be loaded; using gradient background.", error);
+        }
+        const glow = ctx.createRadialGradient(
+            W * 0.82, H * 0.18, 10,
+            W * 0.82, H * 0.18, 650
+        );
+        glow.addColorStop(0, "rgba(245,158,11,0.15)");
+        glow.addColorStop(1, "rgba(245,158,11,0)");
+        ctx.fillStyle = glow;
+        ctx.fillRect(0, 0, W, H);
+        ctx.strokeStyle = "rgba(245,158,11,0.72)";
+        ctx.lineWidth = 2;
+        roundedRect(ctx, 34, 34, W - 68, H - 68, 26);
+        ctx.stroke();
+        ctx.strokeStyle = "rgba(245,158,11,0.25)";
+        ctx.lineWidth = 1;
+        roundedRect(ctx, 49, 49, W - 98, H - 98, 20);
+        ctx.stroke();
+        ctx.fillStyle = "rgba(251,191,36,0.09)";
+        ctx.font = "bold 340px Georgia, serif";
+        ctx.fillText("\"", 62, 315);
+        ctx.textAlign = "center";
+        ctx.fillStyle = "#FBBF24";
+        ctx.font = "bold 29px Georgia, serif";
+        ctx.fillText("MIDNIGHT & GOLD", W / 2, 145);
+        ctx.fillStyle = "rgba(251,191,36,0.7)";
+        ctx.fillRect(W / 2 - 48, 175, 96, 3);
+        let fontSize = 51;
+        let lines;
+        let lineHeight;
+        do {
+            ctx.font = `italic ${fontSize}px Georgia, serif`;
+            lines = wrapText(ctx, quote.text, maxWidth);
+            lineHeight = fontSize * 1.48;
+            fontSize -= 2;
+        } while (
+            fontSize > 32 &&
+            (lines.length * lineHeight > 670 ||
+             lines.some(line => ctx.measureText(line).width > maxWidth))
+        );
+        fontSize = Math.max(fontSize + 2, 32);
+        ctx.font = `italic ${fontSize}px Georgia, serif`;
+        lines = wrapText(ctx, quote.text, maxWidth);
+        lineHeight = fontSize * 1.48;
+        const quoteHeight = lines.length * lineHeight;
+        let y = Math.max(290, (H - quoteHeight) / 2 - 25);
+        ctx.fillStyle = "#FFFBEB";
+        for (const line of lines) {
+            ctx.fillText(line, W / 2, y, maxWidth);
+            y += lineHeight;
+        }
+        const dividerY = Math.min(H - 270, y + 38);
+        ctx.fillStyle = "#F59E0B";
+        ctx.fillRect(W / 2 - 40, dividerY, 80, 3);
+        ctx.fillStyle = "#FBBF24";
+        ctx.font = "italic 31px Georgia, serif";
+        const sourceLines = wrapText(ctx, quote.source, maxWidth);
+        let sourceY = dividerY + 62;
+        for (const line of sourceLines) {
+            ctx.fillText(line, W / 2, sourceY, maxWidth);
+            sourceY += 43;
+        }
+        ctx.fillStyle = "rgba(226,232,240,0.85)";
+        ctx.font = "25px Georgia, serif";
+        ctx.fillText(authorName, W / 2, H - 125);
+        ctx.fillStyle = "rgba(251,191,36,0.75)";
+        ctx.font = "20px Georgia, serif";
+        ctx.fillText("WORDS THAT STAY", W / 2, H - 82);
+        return new Promise((resolve, reject) => {
+            canvas.toBlob(blob => {
+                if (blob) resolve(blob);
+                else reject(new Error("Could not create the image."));
+            }, "image/png");
+        });
+    }
+    function downloadBlob(blob, filename) {
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 30000);
+    }
+    function safeFilename(text) {
+        return text
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, "-")
+            .replace(/^-|-$/g, "")
+            .slice(0, 65) || "poetry-quote";
+    }
+    function getPoemTitle(source) {
+        return source.replace(/^—\s*/, "").trim();
+    }
+    async function handleAction(action, card) {
+        const quote = getQuote(card);
+        const title = getPoemTitle(quote.source);
+        const poemUrl = getQuoteUrl(quote.id, card);
+        const quoteText = `${quote.text}\n\n${quote.source}\n\n— ${authorName}`;
+        const shareText = `${quoteText}\n\nRead the full poem "${title}":\n${poemUrl}`;
+        if (action === "read") {
+            window.location.href = poemUrl;
+            return;
+        }
+        if (action === "copy") {
+            await copyText(quoteText);
+            announce("Quote and attribution copied!");
+            return;
+        }
+        if (action === "link") {
+            await copyText(poemUrl);
+            announce("Direct poem link copied!");
+            return;
+        }
+        if (action === "text-share") {
+            if (navigator.share) {
+                await navigator.share({
+                    title: title,
+                    text: quoteText,
+                    url: poemUrl
+                });
+                announce("Share options opened.");
+            } else {
+                await copyText(shareText);
+                announce("Sharing isn't supported here. Quote and poem link copied!");
+            }
+            return;
+        }
+        if (action === "download" || action === "image-share") {
+            announce("Creating your quote card…");
+            const blob = await createQuoteImage(quote);
+            const filename = safeFilename(title) + ".png";
+            if (action === "download") {
+                downloadBlob(blob, filename);
+                announce("Your quote card is ready to save!");
+                return;
+            }
+            if (navigator.share && typeof File !== "undefined") {
+                const file = new File([blob], filename, {
+                    type: "image/png"
+                });
+                if (!navigator.canShare || navigator.canShare({ files: [file] })) {
+                    await navigator.share({
+                        title: title,
+                        text: `Read "${title}" by ${authorName}:\n${poemUrl}`,
+                        files: [file]
+                    });
+                    announce("Quote card shared.");
+                    return;
+                }
+            }
+            downloadBlob(blob, filename);
+            announce("Image sharing isn't supported here, so your PNG was downloaded instead.");
+        }
+    }
+    const overlay = document.createElement("div");
+    overlay.className = "quote-menu-overlay";
+    overlay.setAttribute("aria-hidden", "true");
+    overlay.innerHTML = `
+        <div class="quote-menu" role="dialog"
+             aria-modal="true" aria-labelledby="quote-menu-title">
+            <h3 id="quote-menu-title">Quote Options</h3>
+            <p class="quote-menu-preview"></p>
+            <div class="quote-menu-options"></div>
+            <button type="button" class="quote-btn quote-close">✕ Close</button>
+        </div>
+    `;
+    document.body.appendChild(overlay);
+    const menuPreview = overlay.querySelector(".quote-menu-preview");
+    const menuOptions = overlay.querySelector(".quote-menu-options");
+    const closeButton = overlay.querySelector(".quote-close");
+    let previouslyFocused = null;
+    function closeQuoteMenu() {
+        overlay.classList.remove("open");
+        overlay.setAttribute("aria-hidden", "true");
+        document.body.classList.remove("menu-open");
+        if (previouslyFocused) {
+            previouslyFocused.focus();
+        }
+    }
+    function openQuoteMenu(card) {
+        previouslyFocused = card;
+        const quote = getQuote(card);
+        const title = getPoemTitle(quote.source);
+        menuPreview.textContent = `"${quote.text}" — ${title}`;
+        menuOptions.innerHTML = "";
+        const buttons = [
+            ["image-share", "✦ Share as Image", true],
+            ["text-share", "↗ Share Quote", false],
+            ["copy", "▣ Copy Quote", false],
+            ["link", "🔗 Copy Poem Link", false],
+            ["read", "📖 Read the Full Poem", false],
+            ["download", "↓ Download Image", false]
+        ];
+        buttons.forEach(([action, label, primary]) => {
+            const button = document.createElement("button");
+            button.type = "button";
+            button.className = "quote-btn" + (primary ? " primary" : "");
+            button.textContent = label;
+            button.addEventListener("click", async () => {
+                button.disabled = true;
+                try {
+                    await handleAction(action, card);
+                    if (action === "read") return;
+                    if (action !== "image-share" && action !== "download") {
+                        closeQuoteMenu();
+                    }
+                } catch (error) {
+                    if (error && error.name === "AbortError") {
+                        announce("Sharing cancelled.");
+                    } else {
+                        console.error("Quote action error:", error);
+                        announce("That action couldn't be completed. Please try again.");
+                    }
+                } finally {
+                    button.disabled = false;
+                }
+            });
+            menuOptions.appendChild(button);
+        });
+        overlay.classList.add("open");
+        overlay.setAttribute("aria-hidden", "false");
+        document.body.classList.add("menu-open");
+        closeButton.focus();
+    }
+    function setupCard(card) {
+        if (card.dataset.quoteReady === "true") return;
+        card.dataset.quoteReady = "true";
+        card.setAttribute("role", "button");
+        card.setAttribute("tabindex", "0");
+        card.setAttribute("aria-haspopup", "dialog");
+        card.setAttribute("aria-label", "Open quote options");
+        card.addEventListener("click", event => {
+            event.preventDefault();
+            event.stopPropagation();
+            openQuoteMenu(card);
+        });
+        card.addEventListener("keydown", event => {
+            if (event.target !== card) return;
+            if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                event.stopPropagation();
+                openQuoteMenu(card);
+            }
+        });
+    }
+    cards.forEach(setupCard);
+    function normalizeTitle(value) {
+        return (value || "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+    }
+    function chooseQuoteLine(text) {
+        const lines = text.split(/\n+/).map(line => line.replace(/\s+/g, " ").trim())
+            .filter(line => line.length >= 35 && line.length <= 240)
+            .filter(line => !/^(home|all poems|collections|gallery|studio|share|read more|copyright)/i.test(line));
+        if (!lines.length) return "";
+        const meaningful = /\b(heart|love|life|world|dream|soul|fear|hope|pain|time|silence|wisdom|strength|beauty|truth|memory|regret|nature|spirit|thought|feeling|journey|light|dark|grow|learn|rise|lost|found|smile|tears|peace|change|choice|future|past)\b/i;
+        lines.sort((a, b) => scoreLine(b, meaningful) - scoreLine(a, meaningful));
+        return lines[0];
+    }
+    function scoreLine(line, meaningful) {
+        let score = 0;
+        if (line.length >= 65 && line.length <= 155) score += 4;
+        if (/[.!?—,:;]/.test(line)) score += 2;
+        if (meaningful.test(line)) score += 3;
+        if (/\b(i|you|we|my|your|our|they|he|she)\b/i.test(line)) score += 1;
+        if (/^(chapter|verse|written by|by )/i.test(line)) score -= 5;
+        return score - Math.abs(line.length - 105) / 80;
+    }
+    async function discoverPoems() {
+        try {
+            const indexResponse = await fetch(new URL("poems.html", window.location.href).href, { cache: "no-cache" });
+            if (!indexResponse.ok) throw new Error("Could not load poems.html");
+            const indexDoc = new DOMParser().parseFromString(await indexResponse.text(), "text/html");
+            const links = Array.from(indexDoc.querySelectorAll("a[href$='.html'], a[href*='.html#']"));
+            const seen = new Set();
+            const poemLinks = links.map(a => ({ href: a.getAttribute("href"), title: a.textContent.trim() }))
+                .filter(item => item.href && /poem/i.test(item.href) && !/quotes?\.html|poems\.html/i.test(item.href))
+                .filter(item => { const key = item.href.split('#')[0]; if (seen.has(key)) return false; seen.add(key); return true; });
+            let added = 0;
+            for (const item of poemLinks) {
+                try {
+                    const poemUrl = new URL(item.href, window.location.href);
+                    const response = await fetch(poemUrl.href, { cache: "no-cache" });
+                    if (!response.ok) continue;
+                    const doc = new DOMParser().parseFromString(await response.text(), "text/html");
+                    const title = (doc.querySelector("h1")?.textContent || doc.querySelector("title")?.textContent || item.title).replace(/\|.*$/, "").trim();
+                    const contentNode = doc.querySelector(".poem-content, .poem-text, .poem-body, .poem, article, main, .content");
+                    const sourceNode = contentNode || doc.body;
+                    const clone = sourceNode.cloneNode(true);
+                    clone.querySelectorAll("nav, header, footer, script, style, button, form, .share, .navigation").forEach(el => el.remove());
+                    const text = clone.innerText || clone.textContent || "";
+                    const chosen = chooseQuoteLine(text);
+                    if (!chosen) continue;
+                    let card = cards.find(existing => normalizeTitle(getPoemTitle(existing.querySelector(".quote-source")?.textContent || "")) === normalizeTitle(title));
+                    if (!card) card = cards.find(existing => normalizeTitle(getPoemTitle(existing.querySelector(".quote-source")?.textContent || "")) === normalizeTitle(item.title));
+                    if (card) {
+                        card.querySelector(".quote-text").textContent = chosen;
+                        card.dataset.poemUrl = poemUrl.href;
+                        continue;
+                    }
+                    const id = "quote-auto-" + normalizeTitle(title).replace(/\s+/g, "-").slice(0, 50);
+                    if (document.getElementById(id)) continue;
+                    card = document.createElement("div");
+                    card.className = "quote-card";
+                    card.id = id;
+                    card.dataset.quoteId = id;
+                    card.dataset.poemUrl = poemUrl.href;
+                    const quoteText = document.createElement("p");
+                    quoteText.className = "quote-text";
+                    quoteText.textContent = chosen;
+                    const quoteSource = document.createElement("p");
+                    quoteSource.className = "quote-source";
+                    quoteSource.textContent = "— " + title;
+                    card.append(quoteText, quoteSource);
+                    status.parentNode.insertBefore(card, status);
+                    cards.push(card);
+                    setupCard(card);
+                    added++;
+                } catch (poemError) {
+                    console.warn("Could not discover poem:", item.href, poemError);
+                }
+            }
+            announce(added ? `Quotes refreshed. Added ${added} new poem${added === 1 ? "" : "s"}.` : "Quotes are ready. Poem discovery checked your poems list.");
+        } catch (error) {
+            console.warn("Automatic poem discovery unavailable:", error);
+            announce("Quotes are ready. Automatic discovery could not load poems.html; existing quotes still work.");
+        }
+    }
+    discoverPoems();
+    closeButton.addEventListener("click", closeQuoteMenu);
+    overlay.addEventListener("click", event => {
+        if (event.target === overlay) {
+            closeQuoteMenu();
+        }
+    });
+    document.addEventListener("keydown", event => {
+        if (event.key === "Escape" && overlay.classList.contains("open")) {
+            closeQuoteMenu();
+        }
+    });
+    function focusLinkedQuote() {
+        const id = decodeURIComponent(window.location.hash.slice(1));
+        if (!id) return;
+        const target = document.getElementById(id);
+        if (target && target.matches("[data-quote-id]")) {
+            target.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+    }
+    window.addEventListener("hashchange", focusLinkedQuote);
+    if (window.location.hash) {
+        setTimeout(focusLinkedQuote, 150);
+    }
+})();
+</script>
+<script src="site.js"></script>
+</body>
+</html>
