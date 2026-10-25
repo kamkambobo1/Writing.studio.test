@@ -19,167 +19,6 @@
 
     document.body.classList.add("mg-ready");
 
-    /* KAMSI background music: shared player on every page.
-       Autoplay is attempted by default, but browsers may require a visitor gesture. */
-    (function initKamsiMusic() {
-        const MUSIC_SRC = "mixkit-relax-beat-292.mp3";
-        const ON_KEY = "kamsi-music-enabled";
-        const AUTO_KEY = "kamsi-music-autoplay";
-        const VOL_KEY = "kamsi-music-volume";
-        const TIME_KEY = "kamsi-music-time";
-        const page = pageName();
-        const isPoemPage = /^poem-.+\.html$/i.test(page);
-
-        // Future poem-specific tracks can be assigned here when those audio files exist.
-        // Until then, all pages use the supplied signature track.
-        const POEM_TRACKS = {
-            // "poem-the-uncertainty-within.html": "assets/audio/uncertainty.mp3"
-        };
-        const audioSrc = (isPoemPage && POEM_TRACKS[page]) || MUSIC_SRC;
-
-        const audio = document.createElement("audio");
-        audio.id = "kamsi-background-audio";
-        audio.preload = "metadata";
-        audio.loop = true;
-        audio.src = audioSrc;
-        audio.setAttribute("aria-label", "KAMSI background music");
-        audio.volume = 0.12;
-        document.body.appendChild(audio);
-
-        let enabled = localStorage.getItem(ON_KEY) !== "false";
-        let autoplay = localStorage.getItem(AUTO_KEY) !== "false";
-        let storedVolume = Number(localStorage.getItem(VOL_KEY));
-        if (Number.isFinite(storedVolume) && storedVolume >= 0 && storedVolume <= 1) {
-            audio.volume = storedVolume;
-        }
-
-        const panel = document.createElement("section");
-        panel.className = "kamsi-music is-collapsed";
-        panel.setAttribute("aria-label", "Background music controls");
-        panel.innerHTML = `
-            <div class="kamsi-music-main">
-                <span class="kamsi-music-icon" aria-hidden="true">♫</span>
-                <div class="kamsi-music-copy">
-                    <strong>Background Music</strong>
-                    <small>Soft music, kept low. Adjust the volume anytime here.</small>
-                </div>
-                <button type="button" class="kamsi-music-toggle" aria-pressed="false">ON</button>
-                <button type="button" class="kamsi-music-close" aria-label="Close music settings" title="Close music settings">×</button>
-            </div>
-            <div class="kamsi-music-settings" hidden>
-                <label class="kamsi-volume-label" for="kamsi-volume">Volume <span class="kamsi-volume-value">12%</span></label>
-                <input id="kamsi-volume" type="range" min="0" max="30" step="1" value="12" aria-label="Music volume">
-                <label class="kamsi-autoplay-label"><input type="checkbox" class="kamsi-autoplay" checked> Try to play automatically on visits</label>
-                <p class="kamsi-music-note">Some browsers require you to press ON before sound can start.</p>
-            </div>`;
-        document.body.appendChild(panel);
-
-        const toggle = panel.querySelector(".kamsi-music-toggle");
-        const settings = panel.querySelector(".kamsi-music-settings");
-        const volume = panel.querySelector("#kamsi-volume");
-        const volumeValue = panel.querySelector(".kamsi-volume-value");
-        const autoplayInput = panel.querySelector(".kamsi-autoplay");
-        volume.value = Math.round(audio.volume * 100);
-        volumeValue.textContent = volume.value + "%";
-        autoplayInput.checked = autoplay;
-
-        function updateToggle() {
-            toggle.textContent = enabled ? "ON" : "OFF";
-            toggle.classList.toggle("is-on", enabled);
-            toggle.setAttribute("aria-pressed", String(enabled));
-            toggle.setAttribute("aria-label", enabled ? "Turn background music off" : "Turn background music on");
-        }
-        updateToggle();
-
-        // Carry playback position across ordinary page navigations where possible.
-        audio.addEventListener("loadedmetadata", function () {
-            const savedPage = sessionStorage.getItem("kamsi-music-page");
-            const savedTime = Number(sessionStorage.getItem(TIME_KEY));
-            if (savedPage && Number.isFinite(savedTime) && savedTime > 0 && audio.duration && savedTime < audio.duration - 1) {
-                try { audio.currentTime = savedTime; } catch (_) {}
-            }
-            sessionStorage.setItem("kamsi-music-page", page);
-            if (enabled && autoplay) {
-                audio.play().catch(function () {
-                    toggle.title = "Tap ON to start music; autoplay may be blocked by your browser.";
-                });
-            }
-        }, { once: true });
-        audio.addEventListener("timeupdate", function () {
-            if (!audio.paused && Number.isFinite(audio.currentTime)) sessionStorage.setItem(TIME_KEY, String(audio.currentTime));
-        });
-        audio.addEventListener("play", function () {
-            enabled = true;
-            updateToggle();
-            localStorage.setItem(ON_KEY, "true");
-        });
-        audio.addEventListener("pause", function () {
-            if (audio.ended) return;
-            updateToggle();
-        });
-
-        toggle.addEventListener("click", function () {
-            if (enabled && !audio.paused) {
-                enabled = false;
-                audio.pause();
-            } else {
-                enabled = true;
-                audio.play().then(function () {
-                    panel.querySelector(".kamsi-music-note").textContent = "Soft music, kept low. Adjust the volume anytime here.";
-                }).catch(function () {
-                    enabled = false;
-                    localStorage.setItem(ON_KEY, "false");
-                    updateToggle();
-                    panel.querySelector(".kamsi-music-note").textContent = "Your browser blocked playback. Tap ON again after interacting with the page.";
-                });
-            }
-            localStorage.setItem(ON_KEY, String(enabled));
-            updateToggle();
-        });
-        const iconButton = panel.querySelector(".kamsi-music-icon");
-        const closeButton = panel.querySelector(".kamsi-music-close");
-        closeButton.addEventListener("click", function () {
-            panel.classList.add("is-collapsed");
-            settings.hidden = true;
-            iconButton.setAttribute("aria-label", "Show music settings");
-        });
-        iconButton.setAttribute("role", "button");
-        iconButton.setAttribute("tabindex", "0");
-        iconButton.setAttribute("aria-label", "Show or hide music settings");
-        function toggleSettings() {
-            const willExpand = panel.classList.contains("is-collapsed");
-            panel.classList.toggle("is-collapsed", !willExpand);
-            settings.hidden = !willExpand;
-            iconButton.setAttribute("aria-label", willExpand ? "Hide music settings" : "Show music settings");
-        }
-        iconButton.addEventListener("click", toggleSettings);
-        iconButton.addEventListener("keydown", function (event) {
-            if (event.key === "Enter" || event.key === " ") { event.preventDefault(); toggleSettings(); }
-        });
-        volume.addEventListener("input", function () {
-            audio.volume = Number(volume.value) / 100;
-            volumeValue.textContent = volume.value + "%";
-            localStorage.setItem(VOL_KEY, String(audio.volume));
-        });
-        autoplayInput.addEventListener("change", function () {
-            autoplay = autoplayInput.checked;
-            localStorage.setItem(AUTO_KEY, String(autoplay));
-            if (!autoplay && !audio.paused) {
-                // Manual mode means the visitor controls starting playback; it doesn't abruptly stop current audio.
-            } else if (autoplay && enabled && audio.paused) {
-                audio.play().catch(function () {});
-            }
-        });
-
-        // Save the last position just before a reader navigates to another local page.
-        document.addEventListener("click", function (event) {
-            const link = event.target.closest && event.target.closest("a[href]");
-            if (!link || !link.href || new URL(link.href, location.href).origin !== location.origin) return;
-            if (!/\.html(?:$|#|\?)/i.test(link.href)) return;
-            if (Number.isFinite(audio.currentTime)) sessionStorage.setItem(TIME_KEY, String(audio.currentTime));
-        });
-    })();
-
     /* reading progress */
     const poem = document.querySelector(".poem-text");
     if (poem) {
@@ -679,22 +518,21 @@
         });
     });
 
-    /* home sparkles */
+    /* Ambient gold stars on interior pages, but never on individual poem pages or homepage */
     const hero = document.querySelector(".hero");
-
-    if (hero) {
-        const layer = document.createElement("div");
-        layer.className = "hero-stars";
-
-        for (let i = 0; i < 28; i++) {
-            const s = document.createElement("span");
-            s.style.left = Math.random() * 100 + "%";
-            s.style.top = Math.random() * 100 + "%";
-            s.style.animationDelay = Math.random() * 4 + "s";
-            layer.appendChild(s);
+    if (!hero && !poem) {
+        const starfield = document.createElement("div");
+        starfield.className = "kamsi-starfield";
+        starfield.setAttribute("aria-hidden", "true");
+        for (let i = 0; i < 24; i++) {
+            const star = document.createElement("span");
+            star.style.left = (4 + Math.random() * 92) + "%";
+            star.style.top = (5 + Math.random() * 90) + "%";
+            star.style.animationDelay = (Math.random() * 8) + "s";
+            star.style.animationDuration = (7 + Math.random() * 5) + "s";
+            starfield.appendChild(star);
         }
-
-        hero.appendChild(layer);
+        document.body.prepend(starfield);
     }
 
     /* quotes page: click a card to copy */
