@@ -64,6 +64,7 @@
                     <small>Soft music, kept low. Adjust the volume anytime here.</small>
                 </div>
                 <button type="button" class="kamsi-music-toggle" aria-pressed="false">ON</button>
+                <button type="button" class="kamsi-music-close" aria-label="Close music settings" title="Close music settings">×</button>
             </div>
             <div class="kamsi-music-settings" hidden>
                 <label class="kamsi-volume-label" for="kamsi-volume">Volume <span class="kamsi-volume-value">12%</span></label>
@@ -136,6 +137,12 @@
             updateToggle();
         });
         const iconButton = panel.querySelector(".kamsi-music-icon");
+        const closeButton = panel.querySelector(".kamsi-music-close");
+        closeButton.addEventListener("click", function () {
+            panel.classList.add("is-collapsed");
+            settings.hidden = true;
+            iconButton.setAttribute("aria-label", "Show music settings");
+        });
         iconButton.setAttribute("role", "button");
         iconButton.setAttribute("tabindex", "0");
         iconButton.setAttribute("aria-label", "Show or hide music settings");

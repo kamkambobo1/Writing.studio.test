@@ -163,3 +163,70 @@ body.mg-ready .pod-card {
     outline: 2px solid #FBBF24;
     outline-offset: 3px;
 }
+
+
+/* Consistent compact music button and visible close control on every page. */
+.kamsi-music {
+    box-sizing: border-box;
+}
+.kamsi-music * {
+    box-sizing: border-box;
+}
+.kamsi-music.is-collapsed {
+    width: 52px !important;
+    height: 52px !important;
+    min-width: 52px !important;
+    max-width: 52px !important;
+    border-radius: 50% !important;
+    padding: 0 !important;
+}
+.kamsi-music.is-collapsed .kamsi-music-main {
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0 !important;
+}
+.kamsi-music.is-collapsed .kamsi-music-icon {
+    display: grid !important;
+    width: 48px !important;
+    height: 48px !important;
+    min-width: 48px !important;
+    max-width: 48px !important;
+    flex: 0 0 48px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: 0 !important;
+    border-radius: 50% !important;
+    line-height: 1 !important;
+}
+.kamsi-music-close {
+    display: inline-grid;
+    place-items: center;
+    flex: 0 0 30px;
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    margin-left: 2px;
+    border: 1px solid rgba(245,158,11,.45);
+    border-radius: 50%;
+    background: #1E293B;
+    color: #FBBF24;
+    font: bold 22px/1 Arial, sans-serif;
+    cursor: pointer;
+}
+.kamsi-music-close:hover {
+    background: #334155;
+    border-color: #FBBF24;
+}
+.kamsi-music.is-collapsed .kamsi-music-close {
+    display: none !important;
+}
+.kamsi-music-icon {
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
