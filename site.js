@@ -54,7 +54,7 @@
         }
 
         const panel = document.createElement("section");
-        panel.className = "kamsi-music";
+        panel.className = "kamsi-music is-collapsed";
         panel.setAttribute("aria-label", "Background music controls");
         panel.innerHTML = `
             <div class="kamsi-music-main">
@@ -107,17 +107,29 @@
         audio.addEventListener("timeupdate", function () {
             if (!audio.paused && Number.isFinite(audio.currentTime)) sessionStorage.setItem(TIME_KEY, String(audio.currentTime));
         });
-        audio.addEventListener("play", function () { toggle.textContent = "ON"; });
+        audio.addEventListener("play", function () {
+            enabled = true;
+            updateToggle();
+            localStorage.setItem(ON_KEY, "true");
+        });
+        audio.addEventListener("pause", function () {
+            if (audio.ended) return;
+            updateToggle();
+        });
 
         toggle.addEventListener("click", function () {
-            settings.hidden = false;
             if (enabled && !audio.paused) {
                 enabled = false;
                 audio.pause();
             } else {
                 enabled = true;
-                audio.play().catch(function () {
-                    panel.querySelector(".kamsi-music-note").textContent = "Your browser blocked automatic playback. Tap ON again after interacting with the page, or check your browser's sound settings.";
+                audio.play().then(function () {
+                    panel.querySelector(".kamsi-music-note").textContent = "Soft music, kept low. Adjust the volume anytime here.";
+                }).catch(function () {
+                    enabled = false;
+                    localStorage.setItem(ON_KEY, "false");
+                    updateToggle();
+                    panel.querySelector(".kamsi-music-note").textContent = "Your browser blocked playback. Tap ON again after interacting with the page.";
                 });
             }
             localStorage.setItem(ON_KEY, String(enabled));
@@ -127,7 +139,12 @@
         iconButton.setAttribute("role", "button");
         iconButton.setAttribute("tabindex", "0");
         iconButton.setAttribute("aria-label", "Show or hide music settings");
-        function toggleSettings() { settings.hidden = !settings.hidden; }
+        function toggleSettings() {
+            const willExpand = panel.classList.contains("is-collapsed");
+            panel.classList.toggle("is-collapsed", !willExpand);
+            settings.hidden = !willExpand;
+            iconButton.setAttribute("aria-label", willExpand ? "Hide music settings" : "Show music settings");
+        }
         iconButton.addEventListener("click", toggleSettings);
         iconButton.addEventListener("keydown", function (event) {
             if (event.key === "Enter" || event.key === " ") { event.preventDefault(); toggleSettings(); }

@@ -134,3 +134,32 @@ body.mg-ready .pod-card {
     .kamsi-music-main { gap: 8px; padding: 10px; }
     .kamsi-music-copy small { font-size: .69rem; }
 }
+
+
+/* Compact music control: expand only when the reader taps the music icon. */
+.kamsi-music.is-collapsed {
+    width: auto;
+    max-width: calc(100vw - 24px);
+    border-radius: 999px;
+}
+.kamsi-music.is-collapsed .kamsi-music-main {
+    padding: 7px;
+    gap: 0;
+}
+.kamsi-music.is-collapsed .kamsi-music-copy,
+.kamsi-music.is-collapsed .kamsi-music-toggle,
+.kamsi-music.is-collapsed .kamsi-music-settings {
+    display: none !important;
+}
+.kamsi-music.is-collapsed .kamsi-music-icon {
+    width: 38px;
+    height: 38px;
+    flex-basis: 38px;
+    border: 0;
+    font-size: 23px;
+}
+.kamsi-music-icon:focus-visible,
+.kamsi-music-toggle:focus-visible {
+    outline: 2px solid #FBBF24;
+    outline-offset: 3px;
+}
