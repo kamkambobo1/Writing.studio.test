@@ -19,6 +19,67 @@
 
     document.body.classList.add("mg-ready");
 
+    /* ===== Central poems list rendering ===== */
+    function renderPoemsFromData() {
+        if (typeof poemsData === "undefined") return;
+
+        const path = location.pathname.split("/").pop() || "index.html";
+        const grid = document.querySelector(".poems-grid");
+        if (!grid) return;
+
+        // All Poems page
+        if (path === "poems.html" || path === "poems") {
+            grid.innerHTML = "";
+            poemsData.forEach(function (p) {
+                const a = document.createElement("a");
+                a.className = "poem-card";
+                a.href = p.file;
+                const meta = p.date ? p.collection + " · " + p.date : p.collection;
+                a.innerHTML = "<h4>" + p.emoji + " " + p.title + "</h4><p>" + meta + "</p>";
+                grid.appendChild(a);
+            });
+            return;
+        }
+
+        // Collection pages
+        const collectionMap = {
+            "collection-silence.html": "Silence",
+            "collection-silence": "Silence",
+            "collection-becoming.html": "Becoming",
+            "collection-becoming": "Becoming",
+            "collection-struggle.html": "Struggle & Wonder",
+            "collection-struggle": "Struggle & Wonder",
+            "collection-first-books.html": "First Books",
+            "collection-first-books": "First Books",
+            "collection-wisdom.html": "Wisdom & Grace",
+            "collection-wisdom": "Wisdom & Grace"
+        };
+
+        const collectionName = collectionMap[path];
+        if (collectionName) {
+            grid.innerHTML = "";
+            poemsData
+                .filter(function (p) { return p.collection === collectionName; })
+                .forEach(function (p) {
+                    const a = document.createElement("a");
+                    a.className = "poem-card";
+                    a.href = p.file;
+                    a.innerHTML = "<h4>" + p.emoji + " " + p.title + "</h4><p>" + p.excerpt + "</p>";
+                    grid.appendChild(a);
+                });
+        }
+    }
+
+    // Run after DOM is ready (script is at end of body)
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", renderPoemsFromData);
+    } else {
+        renderPoemsFromData();
+    }
+    /* ===== end central rendering ===== */
+
+
+
     /* KAMSI background music: shared player on every page.
        Autoplay is attempted by default, but browsers may require a visitor gesture. */
     (function initKamsiMusic() {
