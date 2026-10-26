@@ -102,9 +102,139 @@ body.mg-ready .pod-card {
 }
 
 
-/* KAMSI homepage: slow, gentle page-turning book */
+/* KAMSI signature background-music control */
+.kamsi-music {
+    position: fixed; right: 14px; bottom: 76px; z-index: 500;
+    width: min(350px, calc(100vw - 28px));
+    color: #FFFBEB; background: rgba(15, 23, 42, .97);
+    border: 1px solid rgba(245, 158, 11, .55); border-radius: 16px;
+    box-shadow: 0 10px 32px rgba(0,0,0,.42); backdrop-filter: blur(12px);
+    font-family: Georgia, serif; overflow: hidden;
+}
+.kamsi-music-main { display: flex; align-items: center; gap: 10px; padding: 12px; }
+.kamsi-music-icon { flex: 0 0 34px; width: 34px; height: 34px; display: grid; place-items: center;
+    border: 1px solid rgba(245,158,11,.4); border-radius: 50%; color: #FBBF24; font-size: 21px; cursor: pointer; }
+.kamsi-music-copy { flex: 1; min-width: 0; }
+.kamsi-music-copy strong { display: block; color: #FBBF24; font-size: .95rem; margin-bottom: 4px; }
+.kamsi-music-copy small { display: block; color: #E2E8F0; opacity: .88; font-size: .72rem; line-height: 1.35; }
+.kamsi-music-toggle { flex: 0 0 auto; min-width: 54px; padding: 8px 10px; border-radius: 999px;
+    border: 1px solid rgba(245,158,11,.45); background: #1E293B; color: #FFFBEB;
+    font: bold .8rem Georgia, serif; cursor: pointer; }
+.kamsi-music-toggle.is-on { background: #166534; border-color: #4ADE80; color: #F0FDF4; }
+.kamsi-music-settings { border-top: 1px solid rgba(245,158,11,.2); padding: 12px 14px 14px; }
+.kamsi-music-settings[hidden] { display: none; }
+.kamsi-volume-label { display: flex; justify-content: space-between; gap: 10px; color: #FFFBEB; font-size: .85rem; }
+.kamsi-volume-value { color: #FBBF24; }
+.kamsi-music-settings input[type="range"] { display: block; width: 100%; margin: 12px 0; accent-color: #F59E0B; }
+.kamsi-autoplay-label { display: flex; align-items: center; gap: 8px; color: #E2E8F0; font-size: .78rem; line-height: 1.4; }
+.kamsi-autoplay-label input { accent-color: #F59E0B; }
+.kamsi-music-note { margin-top: 9px; color: #CBD5E1; opacity: .8; font-size: .72rem; line-height: 1.45; }
+@media (max-width: 480px) {
+    .kamsi-music { right: 10px; bottom: 70px; width: calc(100vw - 20px); }
+    .kamsi-music-main { gap: 8px; padding: 10px; }
+    .kamsi-music-copy small { font-size: .69rem; }
+}
+
+
+/* Compact music control: expand only when the reader taps the music icon. */
+.kamsi-music.is-collapsed {
+    width: auto;
+    max-width: calc(100vw - 24px);
+    border-radius: 999px;
+}
+.kamsi-music.is-collapsed .kamsi-music-main {
+    padding: 7px;
+    gap: 0;
+}
+.kamsi-music.is-collapsed .kamsi-music-copy,
+.kamsi-music.is-collapsed .kamsi-music-toggle,
+.kamsi-music.is-collapsed .kamsi-music-settings {
+    display: none !important;
+}
+.kamsi-music.is-collapsed .kamsi-music-icon {
+    width: 38px;
+    height: 38px;
+    flex-basis: 38px;
+    border: 0;
+    font-size: 23px;
+}
+.kamsi-music-icon:focus-visible,
+.kamsi-music-toggle:focus-visible {
+    outline: 2px solid #FBBF24;
+    outline-offset: 3px;
+}
+
+
+/* Consistent compact music button and visible close control on every page. */
+.kamsi-music {
+    box-sizing: border-box;
+}
+.kamsi-music * {
+    box-sizing: border-box;
+}
+.kamsi-music.is-collapsed {
+    width: 52px !important;
+    height: 52px !important;
+    min-width: 52px !important;
+    max-width: 52px !important;
+    border-radius: 50% !important;
+    padding: 0 !important;
+}
+.kamsi-music.is-collapsed .kamsi-music-main {
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0 !important;
+}
+.kamsi-music.is-collapsed .kamsi-music-icon {
+    display: grid !important;
+    width: 48px !important;
+    height: 48px !important;
+    min-width: 48px !important;
+    max-width: 48px !important;
+    flex: 0 0 48px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: 0 !important;
+    border-radius: 50% !important;
+    line-height: 1 !important;
+}
+.kamsi-music-close {
+    display: inline-grid;
+    place-items: center;
+    flex: 0 0 30px;
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    margin-left: 2px;
+    border: 1px solid rgba(245,158,11,.45);
+    border-radius: 50%;
+    background: #1E293B;
+    color: #FBBF24;
+    font: bold 22px/1 Arial, sans-serif;
+    cursor: pointer;
+}
+.kamsi-music-close:hover {
+    background: #334155;
+    border-color: #FBBF24;
+}
+.kamsi-music.is-collapsed .kamsi-music-close {
+    display: none !important;
+}
+.kamsi-music-icon {
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+
+/* Book scene + starfield styles */
 .kamsi-book-scene {
-    position: absolute; left: 6%; bottom: 13%; width: 220px; height: 150px;
+    position: absolute; left: 5%; bottom: 12%; width: 340px; height: 230px;
     z-index: 1; perspective: 900px; pointer-events: none; opacity: .92;
 }
 .kamsi-book {
@@ -130,19 +260,65 @@ body.mg-ready .pod-card {
     46%, 100% { transform: rotateY(-180deg); }
 }
 /* Subtle ambient stars on non-poem interior pages only */
-.kamsi-starfield { position:fixed; inset:0; z-index:0; overflow:hidden; pointer-events:none; }
-.kamsi-starfield span { position:absolute; width:2px; height:2px; border-radius:50%; background:#fbbf24; opacity:0; box-shadow:0 0 7px rgba(251,191,36,.7); animation:kamsi-star-drift 8s ease-in-out infinite; }
-@keyframes kamsi-star-drift {
-    0%,100% { opacity:0; transform:translate3d(0,8px,0) scale(.65); }
-    35%,65% { opacity:.45; transform:translate3d(5px,-8px,0) scale(1); }
-}
+
 @media (max-width: 760px) {
-    .kamsi-book-scene { width:150px; height:105px; left:50%; bottom:5%; transform:translateX(-50%); opacity:.58; }
-    .kamsi-book { inset:8px 5px; }
+    .kamsi-book-scene { width:240px; height:165px; left:50%; bottom:4%; transform:translateX(-50%); opacity:.75; }
+    .kamsi-book { inset:10px 6px; }
     .hero-content { max-width:100%; }
     .hero .cta { margin-top:1.6rem; }
 }
 @media (prefers-reduced-motion: reduce) {
     .book-turn-page, .kamsi-starfield span { animation:none !important; }
     .book-turn-page { display:none; }
+}
+
+.kamsi-starfield { position:fixed; inset:0; z-index:0; overflow:hidden; pointer-events:none; }
+/* Larger, clearly visible silver sparkles on non-poem pages. */
+.kamsi-starfield span { position:absolute; width:7px; height:7px; background:linear-gradient(135deg,#ffffff 0%,#dce7f5 48%,#8fa5c1 100%); clip-path:polygon(50% 0%,61% 36%,100% 50%,61% 64%,50% 100%,39% 64%,0% 50%,39% 36%); opacity:0; filter:drop-shadow(0 0 3px rgba(230,240,255,.95)); animation:kamsi-star-twinkle 4.6s ease-in-out infinite; }
+/* Smaller, delicate silver sparkles on individual poem pages. */
+.kamsi-starfield.is-poem span { width:3px; height:3px; filter:drop-shadow(0 0 2px rgba(230,240,255,.9)); animation-duration:5.5s; }
+@keyframes kamsi-star-twinkle {
+    0%,100% { opacity:.18; transform:scale(.65) rotate(0deg); }
+    30% { opacity:.95; transform:scale(1.25) rotate(22deg); }
+    52% { opacity:.48; transform:scale(.85) rotate(45deg); }
+    72% { opacity:1; transform:scale(1.35) rotate(70deg); }
+}
+
+/* Gentle attention shake for the homepage CTA */
+.cta {
+    animation: kamsi-cta-shake 2.8s ease-in-out infinite;
+}
+@keyframes kamsi-cta-shake {
+    0%, 100% { transform: translateX(0) rotate(0deg); }
+    15% { transform: translateX(-3px) rotate(-0.8deg); }
+    30% { transform: translateX(3px) rotate(0.8deg); }
+    45% { transform: translateX(-2px) rotate(-0.4deg); }
+    60% { transform: translateX(2px) rotate(0.4deg); }
+    75% { transform: translateX(0) rotate(0deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+    .cta { animation: none !important; }
+}
+
+/* Save confirmation toast */
+.kamsi-fav-toast {
+    position: fixed;
+    left: 50%;
+    bottom: 5.5rem;
+    transform: translateX(-50%) translateY(10px);
+    background: rgba(15,23,42,.95);
+    color: #FBBF24;
+    border: 1px solid rgba(245,158,11,.5);
+    border-radius: 999px;
+    padding: .55rem 1.2rem;
+    font-family: Georgia, serif;
+    font-size: .95rem;
+    z-index: 250;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .25s ease, transform .25s ease;
+}
+.kamsi-fav-toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
 }
