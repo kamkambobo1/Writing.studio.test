@@ -68,7 +68,7 @@
             </div>
             <div class="kamsi-music-settings" hidden>
                 <label class="kamsi-volume-label" for="kamsi-volume">Volume <span class="kamsi-volume-value">12%</span></label>
-                <input id="kamsi-volume" type="range" min="0" max="30" step="1" value="12" aria-label="Music volume">
+                <input id="kamsi-volume" type="range" min="0" max="70" step="1" value="12" aria-label="Music volume">
                 <label class="kamsi-autoplay-label"><input type="checkbox" class="kamsi-autoplay" checked> Try to play automatically on visits</label>
                 <p class="kamsi-music-note">Some browsers require you to press ON before sound can start.</p>
             </div>`;
@@ -152,9 +152,31 @@
             settings.hidden = !willExpand;
             iconButton.setAttribute("aria-label", willExpand ? "Hide music settings" : "Show music settings");
         }
-        iconButton.addEventListener("click", toggleSettings);
+        iconButton.addEventListener("click", function (event) {
+            event.stopPropagation();
+            toggleSettings();
+        });
         iconButton.addEventListener("keydown", function (event) {
             if (event.key === "Enter" || event.key === " ") { event.preventDefault(); toggleSettings(); }
+        });
+
+        // Close the music panel when tapping anywhere outside it
+        document.addEventListener("click", function (event) {
+            if (panel.classList.contains("is-collapsed")) return;
+            if (panel.contains(event.target)) return;
+            panel.classList.add("is-collapsed");
+            settings.hidden = true;
+            iconButton.setAttribute("aria-label", "Show music settings");
+        });
+
+        // Stop music as soon as the reader leaves the site or hides the page
+        function stopMusicOnLeave() {
+            if (!audio.paused) audio.pause();
+        }
+        window.addEventListener("pagehide", stopMusicOnLeave);
+        window.addEventListener("beforeunload", stopMusicOnLeave);
+        document.addEventListener("visibilitychange", function () {
+            if (document.visibilityState === "hidden") stopMusicOnLeave();
         });
         volume.addEventListener("input", function () {
             audio.volume = Number(volume.value) / 100;
@@ -720,10 +742,11 @@
     const starCount = poemPageForStars ? 34 : 48;
     for (let i = 0; i < starCount; i++) {
         const star = document.createElement("span");
+        star.className = Math.random() < 0.55 ? "silver" : "gold";
         star.style.left = (3 + Math.random() * 94) + "%";
         star.style.top = (5 + Math.random() * 90) + "%";
         star.style.animationDelay = (Math.random() * 5) + "s";
-        star.style.animationDuration = (4 + Math.random() * 3) + "s";
+        star.style.animationDuration = (4.5 + Math.random() * 3) + "s";
         starfield.appendChild(star);
     }
     document.body.prepend(starfield);

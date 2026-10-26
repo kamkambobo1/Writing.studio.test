@@ -273,15 +273,28 @@ body.mg-ready .pod-card {
 }
 
 .kamsi-starfield { position:fixed; inset:0; z-index:0; overflow:hidden; pointer-events:none; }
-/* Larger, clearly visible silver sparkles on non-poem pages. */
-.kamsi-starfield span { position:absolute; width:7px; height:7px; background:linear-gradient(135deg,#ffffff 0%,#dce7f5 48%,#8fa5c1 100%); clip-path:polygon(50% 0%,61% 36%,100% 50%,61% 64%,50% 100%,39% 64%,0% 50%,39% 36%); opacity:0; filter:drop-shadow(0 0 3px rgba(230,240,255,.95)); animation:kamsi-star-twinkle 4.6s ease-in-out infinite; }
-/* Smaller, delicate silver sparkles on individual poem pages. */
-.kamsi-starfield.is-poem span { width:3px; height:3px; filter:drop-shadow(0 0 2px rgba(230,240,255,.9)); animation-duration:5.5s; }
+/* Soft mixed silver + gold sparkles */
+.kamsi-starfield span {
+    position:absolute; width:6px; height:6px;
+    clip-path:polygon(50% 0%,61% 36%,100% 50%,61% 64%,50% 100%,39% 64%,0% 50%,39% 36%);
+    opacity:0;
+    animation:kamsi-star-twinkle 5.2s ease-in-out infinite;
+}
+.kamsi-starfield span.silver {
+    background:linear-gradient(135deg,#f8fafc 0%,#e2e8f0 50%,#94a3b8 100%);
+    filter:drop-shadow(0 0 2px rgba(226,232,240,.7));
+}
+.kamsi-starfield span.gold {
+    background:linear-gradient(135deg,#fffbeb 0%,#fbbf24 45%,#d97706 100%);
+    filter:drop-shadow(0 0 3px rgba(251,191,36,.55));
+}
+/* Smaller on poem pages */
+.kamsi-starfield.is-poem span { width:3px; height:3px; animation-duration:6s; }
 @keyframes kamsi-star-twinkle {
-    0%,100% { opacity:.18; transform:scale(.65) rotate(0deg); }
-    30% { opacity:.95; transform:scale(1.25) rotate(22deg); }
-    52% { opacity:.48; transform:scale(.85) rotate(45deg); }
-    72% { opacity:1; transform:scale(1.35) rotate(70deg); }
+    0%,100% { opacity:.12; transform:scale(.7) rotate(0deg); }
+    30% { opacity:.55; transform:scale(1.15) rotate(18deg); }
+    52% { opacity:.28; transform:scale(.85) rotate(40deg); }
+    72% { opacity:.65; transform:scale(1.2) rotate(65deg); }
 }
 
 /* Gentle attention shake for the homepage CTA */
